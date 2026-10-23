@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аптечка — ЗдоровьеНавигатор</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+<style>
+.checklist-container { max-width: 600px; margin: 0 auto; }
+.category-title { 
+    font-size: 1.2rem; 
+    font-weight: bold; 
+    color: var(--accent-purple); 
+    margin: 25px 0 10px; 
+    padding-bottom: 5px; 
+    border-bottom: 2px solid var(--border-glass);
+}
+.check-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    padding: 12px; 
+    background: rgba(255,255,255,0.7); 
+    border-radius: 8px; 
+    margin-bottom: 8px; 
+    cursor: pointer; 
+    transition: all 0.3s;
+    border: 1px solid transparent;
+}
+.check-item:hover { background: rgba(138, 43, 226, 0.05); }
+.check-item.checked { 
+    background: rgba(72, 187, 120, 0.1); 
+    border-color: #48BB78; 
+    opacity: 0.8;
+}
+.custom-checkbox { 
+    width: 22px; 
+    height: 22px; 
+    border: 2px solid var(--accent-purple); 
+    border-radius: 6px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+.check-item.checked .custom-checkbox { 
+    background: var(--accent-purple); 
+    border-color: var(--accent-purple);
+}
+.custom-checkbox::after { 
+    content: '✓'; 
+    color: white; 
+    font-weight: bold; 
+    font-size: 14px; 
+    opacity: 0; 
+    transition: opacity 0.3s;
+}
+.check-item.checked .custom-checkbox::after { opacity: 1; }
+.item-name { font-size: 1rem; color: var(--text-dark); }
+.item-desc { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+.progress-bar { 
+    height: 8px; 
+    background: #E2E8F0; 
+    border-radius: 4px; 
+    margin: 20px 0; 
+    overflow: hidden;
+}
+.progress-fill { 
+    height: 100%; 
+    background: linear-gradient(90deg, var(--accent-purple), #B794F4); 
+    width: 0%; 
+    transition: width 0.5s ease;
+}
+.print-btn { 
+    background: transparent; 
+    border: 2px solid var(--accent-purple); 
+    color: var(--accent-purple); 
+    padding: 12px 24px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    margin-top: 20px; 
+    width: 100%;
+    transition: all 0.3s;
+}
+.print-btn:hover { background: var(--accent-purple); color: white; }
+@media print {
+    body * { visibility: hidden; }
+    .checklist-container, .checklist-container * { visibility: visible; }
+    .checklist-container { position: absolute; left: 0; top: 0; width: 100%; }
+    .print-btn, header, footer, img { display: none !important; }
+    .check-item { break-inside: avoid; border: 1px solid #ccc; background: white !important; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header style="margin-bottom:20px"><a href="index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
+<h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🚑 Чек-лист аптечки</h1>
+<p class="subtitle">Собери всё необходимое для дома, дачи или путешествия. Отмечай готовое!</p>
+
+<!-- КАРТИНКА -->
+<img src="first-aid-kit.jpg" alt="Аптечка первой помощи" style="width:100%; height:250px; object-fit:cover; border-radius:16px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+<div class="card checklist-container">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div style="text-align:center; font-size:0.9rem; color:var(--text-muted); margin-bottom:20px;" id="progressText">Собрано: 0 из 0</div>
+
+    <!-- Категория 1: Обезболивающие и жаропонижающие -->
+    <div class="category-title">💊 Обезболивающие и жаропонижающие</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Ибупрофен / Нурофен</div><div class="item-desc">От головной, зубной боли, температуры</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Парацетамол</div><div class="item-desc">Жаропонижающее, безопаснее для желудка</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Но-шпа (Дротаверин)</div><div class="item-desc">От спазмов в животе, менструальной боли</div></div>
+    </div>
+
+    <!-- Категория 2: ЖКТ -->
+    <div class="category-title">🍽️ Для желудка и кишечника</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Активированный уголь / Энтеросгель</div><div class="item-desc">При отравлении, диарее</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Мезим / Креон</div><div class="item-desc">Ферменты для улучшения пищеварения</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Регидрон</div><div class="item-desc">Восстановление водно-солевого баланса</div></div>
+    </div>
+
+    <!-- Категория 3: Травмы и раны -->
+    <div class="category-title"> Травмы, раны, ожоги</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Хлоргексидин / Мирамистин</div><div class="item-desc">Антисептик для обработки ран</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Бинт стерильный + лейкопластырь</div><div class="item-desc">Перевязочные материалы разных размеров</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Пантенол спрей</div><div class="item-desc">От ожогов (солнечных, термических)</div></div>
+    </div>
+
+    <!-- Категория 4: Аллергия и простуда -->
+    <div class="category-title">🤧 Аллергия и простуда</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Цетрин / Зодак</div><div class="item-desc">Антигистаминное от аллергии</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Сосудосуживающие капли в нос</div><div class="item-desc">При заложенности носа (не более 5 дней!)</div></div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-checkbox"></div>
+        <div><div class="item-name">Леденцы от боли в горле</div><div class="item-desc">Стрепсилс, Граммидин и аналоги</div></div>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Распечатать чек-лист</button>
+    
+    <div style="margin-top:20px; font-size:0.9rem; color:var(--text-muted); text-align:center; line-height:1.5;">
+        💡 <strong>Совет:</strong> Проверяй сроки годности раз в полгода. Храни аптечку в недоступном для детей месте при комнатной температуре.
+    </div>
+</div>
+
+<footer>© 2026 ЗдоровьеНавигатор · Информация справочная.</footer>
+</div>
+
+<script>
+function toggleCheck(el) {
+    el.classList.toggle('checked');
+    updateProgress();
+}
+
+function updateProgress() {
+    const total = document.querySelectorAll('.check-item').length;
+    const checked = document.querySelectorAll('.check-item.checked').length;
+    const percent = Math.round((checked / total) * 100);
+    
+    document.getElementById('progressFill').style.width = percent + '%';
+    document.getElementById('progressText').innerText = `Собрано: ${checked} из ${total} (${percent}%)`;
+}
+
+// Инициализация при загрузке
+updateProgress();
+</script>
+</body>
+</html>
