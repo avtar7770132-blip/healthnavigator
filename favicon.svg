@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Серебристый фон -->
+  <circle cx="32" cy="32" r="30" fill="#E0E5EC"/>
+  <!-- Фиолетовый крест -->
+  <rect x="28" y="16" width="8" height="32" rx="2" fill="#8A2BE2"/>
+  <rect x="16" y="28" width="32" height="8" rx="2" fill="#8A2BE2"/>
+  <!-- Блик для объема -->
+  <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+</svg>
