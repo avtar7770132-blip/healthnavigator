@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор пенсии — ЗдоровьеНавигатор</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+<style>
+.result-box-pension { 
+    background: rgba(255, 255, 255, 0.8); 
+    border-left: 5px solid var(--accent-purple); 
+    padding: 25px; 
+    border-radius: 12px; 
+    margin-top: 30px; 
+    display: none; 
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.15);
+}
+.pension-value { font-size: 3rem; font-weight: 800; color: var(--accent-purple); text-align: center; margin: 10px 0; }
+.pension-label { text-align: center; font-size: 1.1rem; color: var(--text-muted); margin-bottom: 20px; }
+.breakdown { list-style: none; padding: 0; margin: 20px 0; }
+.breakdown li { padding: 12px 0; border-bottom: 1px dashed #CBD5E0; display: flex; justify-content: space-between; font-size: 1rem; }
+.breakdown li span:last-child { font-weight: bold; color: var(--text-dark); }
+.warning-box { 
+    background: rgba(237, 137, 54, 0.1); 
+    border-left: 4px solid #ED8936; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-top: 20px; 
+    font-size: 0.95rem;
+}
+.input-styled { width: 100%; padding: 12px; border: 1px solid var(--border-glass); border-radius: 8px; background: rgba(255,255,255,0.9); font-size: 1rem; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+<header style="margin-bottom:20px"><a href="index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
+<h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"> Калькулятор пенсии</h1>
+<p class="subtitle">Узнай примерный размер страховой пенсии по старости.</p>
+
+<!-- КАРТИНКА -->
+<img src="pension-calc.jpg" alt="Пенсионное удостоверение и калькулятор" style="width:100%; height:250px; object-fit:cover; border-radius:16px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Твой стаж (лет)</label>
+        <input type="number" id="years" placeholder="Например: 30" class="input-styled">
+    </div>
+    
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Пенсионные баллы (ИПК)</label>
+        <input type="number" id="points" placeholder="Например: 90" step="0.1" class="input-styled">
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-top:-15px; margin-bottom:20px;">Можно узнать в личном кабинете СФР или на Госуслугах</div>
+    </div>
+
+    <button onclick="calculatePension()" class="btn-link" style="width:100%; border:none; cursor:pointer;">Рассчитать пенсию</button>
+
+    <!-- РЕЗУЛЬТАТЫ -->
+    <div id="resultArea" class="result-box-pension">
+        <div class="pension-value" id="totalPension">0 ₽</div>
+        <div class="pension-label">Примерная ежемесячная выплата</div>
+        
+        <ul class="breakdown">
+            <li><span>Фиксированная часть:</span> <span id="fixedPart">0 ₽</span></li>
+            <li><span>Страховая часть (баллы × стоимость):</span> <span id="insurancePart">0 ₽</span></li>
+        </ul>
+        
+        <div class="warning-box">
+            ️ <strong>Важно:</strong> Расчет приблизительный. Стоимость балла и фиксированная часть ежегодно индексируются. Точную сумму назначает Социальный фонд РФ при обращении за пенсией.
+        </div>
+    </div>
+</div>
+
+<footer>© 2026 ЗдоровьеНавигатор · Информация справочная.</footer>
+</div>
+
+<script>
+function calculatePension() {
+    const years = parseInt(document.getElementById('years').value);
+    const points = parseFloat(document.getElementById('points').value);
+    
+    if (!years || isNaN(points)) return alert("Пожалуйста, заполните все поля");
+    
+    // Актуальные значения на 2026 год (прогнозные/индексированные)
+    const FIXED_PART = 8700; // Фиксированная выплата (примерно)
+    const POINT_COST = 135;  // Стоимость 1 пенсионного балла (примерно)
+    
+    // Проверка минимальных требований
+    let minYearsOk = years >= 15; // Минимальный стаж для права на пенсию
+    let minPointsOk = points >= 30; // Минимальные баллы
+    
+    const insurancePart = Math.round(points * POINT_COST);
+    const total = FIXED_PART + insurancePart;
+    
+    // Обновление UI
+    document.getElementById('resultArea').style.display = 'block';
+    document.getElementById('totalPension').innerText = total.toLocaleString('ru-RU') + " ₽";
+    document.getElementById('fixedPart').innerText = FIXED_PART.toLocaleString('ru-RU') + " ₽";
+    document.getElementById('insurancePart').innerText = insurancePart.toLocaleString('ru-RU') + " ₽";
+    
+    // Добавляем предупреждение если не хватает стажа/баллов
+    const warningBox = document.querySelector('.warning-box');
+    if (!minYearsOk || !minPointsOk) {
+        let msg = "⚠️ <strong>Внимание!</strong> ";
+        if (!minYearsOk) msg += "Не хватает стажа (минимум 15 лет). ";
+        if (!minPointsOk) msg += "Не хватает баллов (минимум 30). ";
+        msg += "Без выполнения этих условий страховая пенсия по старости не назначается.";
+        warningBox.innerHTML = msg;
+        warningBox.style.background = "rgba(229, 62, 62, 0.1)";
+        warningBox.style.borderLeftColor = "#E53E3E";
+    } else {
+        warningBox.innerHTML = "✅ Вы выполняете минимальные требования для назначения страховой пенсии.";
+        warningBox.style.background = "rgba(72, 187, 120, 0.1)";
+        warningBox.style.borderLeftColor = "#48BB78";
+    }
+}
+</script>
+</body>
+</html>
