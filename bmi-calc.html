@@ -24,13 +24,14 @@
 .ideal-weight { text-align: center; font-size: 1.1rem; color: var(--text-muted); margin-top: 10px; padding-top: 10px; border-top: 1px dashed #CBD5E0; }
 .scale-bar { height: 12px; background: #E2E8F0; border-radius: 6px; margin: 20px 0; position: relative; overflow: hidden; }
 .scale-fill { height: 100%; width: 0%; transition: width 1s ease-out, background-color 0.5s; border-radius: 6px; }
+.age-note { font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; font-style: italic; }
 </style>
 </head>
 <body>
 <div class="container">
 <header style="margin-bottom:20px"><a href="index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
 <h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">⚖️ Калькулятор ИМТ</h1>
-<p class="subtitle">Узнай свой индекс массы тела и идеальный вес для своего роста.</p>
+<p class="subtitle">Узнай свой индекс массы тела с учетом возраста.</p>
 
 <!-- КАРТИНКА -->
 <img src="bmi-scale.jpg" alt="Электронные весы" style="width:100%; height:250px; object-fit:cover; border-radius:16px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
@@ -44,6 +45,13 @@
     <div class="form-group" style="margin-bottom:20px;">
         <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Твой рост (см)</label>
         <input type="number" id="height" placeholder="Например: 180" style="width:100%; padding:12px; border:1px solid var(--border-glass); border-radius:8px; background:rgba(255,255,255,0.9); font-size:1rem;">
+    </div>
+
+    <!-- НОВОЕ ПОЛЕ: ВОЗРАСТ -->
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Твой возраст (лет)</label>
+        <input type="number" id="age" placeholder="Например: 35" style="width:100%; padding:12px; border:1px solid var(--border-glass); border-radius:8px; background:rgba(255,255,255,0.9); font-size:1rem;">
+        <div class="age-note">Для людей старше 65 лет нормы ИМТ могут быть выше (до 27-29).</div>
     </div>
 
     <button onclick="calculateBMI()" class="btn-link" style="width:100%; border:none; cursor:pointer;">Рассчитать ИМТ</button>
@@ -60,7 +68,7 @@
         <div class="ideal-weight" id="idealWeight">Идеальный вес: -- кг</div>
         
         <div style="margin-top:20px; font-size:0.9rem; color:var(--text-muted); text-align:center; line-height:1.5;">
-            💡 <strong>Совет:</strong> ИМТ — ориентировочный показатель. Для точной оценки состава тела учитывайте мышечную массу и возраст.
+             <strong>Совет:</strong> С возрастом мышечная масса уменьшается, поэтому небольшой избыток веса после 60 лет может быть нормой.
         </div>
     </div>
 </div>
@@ -72,42 +80,56 @@
 function calculateBMI() {
     const w = parseFloat(document.getElementById('weight').value);
     const h = parseFloat(document.getElementById('height').value);
+    const age = parseInt(document.getElementById('age').value);
     
-    if (!w || !h || h <= 0) return alert("Пожалуйста, введите корректные вес и рост");
+    if (!w || !h || h <= 0 || !age) return alert("Пожалуйста, заполните все поля");
     
     // Расчет ИМТ
     const bmi = w / Math.pow(h / 100, 2);
     const bmiFixed = bmi.toFixed(1);
     
-    // Расчет идеального веса (формула Брока упрощенная)
-    const idealMin = (18.5 * Math.pow(h / 100, 2)).toFixed(1);
-    const idealMax = (24.9 * Math.pow(h / 100, 2)).toFixed(1);
+    // Расчет идеального веса (формула Брока с поправкой на возраст)
+    let idealBase = (h - 100) * 0.9; // Базовая формула
+    if (age > 40) idealBase *= 1.05; // +5% после 40 лет
+    if (age > 60) idealBase *= 1.10; // +10% после 60 лет
     
-    // Определение статуса и цвета
+    const idealMin = (idealBase * 0.9).toFixed(1);
+    const idealMax = (idealBase * 1.1).toFixed(1);
+    
+    // Определение статуса с учетом возраста
     let status = "";
     let colorClass = "";
     let fillColor = "";
     let fillWidth = "0%";
     
+    // Корректировка границ для пожилых
+    let upperNormal = 25;
+    let upperOverweight = 30;
+    
+    if (age >= 65) {
+        upperNormal = 27; // Для пожилых норма до 27
+        upperOverweight = 32;
+    }
+    
     if (bmi < 18.5) {
         status = "Дефицит массы тела";
         colorClass = "status-info";
-        fillColor = "#3182CE"; // Синий
+        fillColor = "#3182CE";
         fillWidth = "20%";
-    } else if (bmi >= 18.5 && bmi < 25) {
+    } else if (bmi >= 18.5 && bmi < upperNormal) {
         status = "Норма ✅";
         colorClass = "status-normal";
-        fillColor = "#48BB78"; // Зеленый
+        fillColor = "#48BB78";
         fillWidth = "50%";
-    } else if (bmi >= 25 && bmi < 30) {
-        status = "Избыточная масса (Предожирение)";
+    } else if (bmi >= upperNormal && bmi < upperOverweight) {
+        status = "Избыточная масса";
         colorClass = "status-warning";
-        fillColor = "#ED8936"; // Оранжевый
+        fillColor = "#ED8936";
         fillWidth = "75%";
     } else {
-        status = "Ожирение ️";
+        status = "Ожирение ⚠️";
         colorClass = "status-warning";
-        fillColor = "#E53E3E"; // Красный
+        fillColor = "#E53E3E";
         fillWidth = "100%";
     }
     
@@ -120,7 +142,7 @@ function calculateBMI() {
     statusEl.innerText = status;
     statusEl.className = "bmi-status " + colorClass;
     
-    document.getElementById('idealWeight').innerText = `Идеальный диапазон: ${idealMin} – ${idealMax} кг`;
+    document.getElementById('idealWeight').innerText = `Рекомендуемый диапазон: ${idealMin} – ${idealMax} кг`;
     
     const fillEl = document.getElementById('scaleFill');
     fillEl.style.backgroundColor = fillColor;
