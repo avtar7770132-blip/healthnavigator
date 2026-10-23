@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Блог ЗдоровьеНавигатора</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="../styles.css">
+<style>
+.blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; margin-top: 30px; }
+.blog-card { background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; text-decoration: none; color: inherit; transition: all 0.3s; display: block; }
+.blog-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-neon); border-color: var(--accent-purple); }
+.blog-card img { width: 100%; height: 180px; object-fit: cover; }
+.blog-content { padding: 20px; }
+.blog-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: var(--text-dark); }
+.blog-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="container">
+<header style="margin-bottom:20px"><a href="../index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
+<h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📖 Блог ЗдоровьеНавигатора</h1>
+<p class="subtitle">Экспертные статьи о здоровье, питании и экономии на медицине.</p>
+
+<div class="blog-grid">
+    <a href="bmi-article.html" class="blog-card"><img src="../bmi-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Как рассчитать идеальный вес</div><div class="blog-desc">Формулы, нормы ИМТ и поправки на возраст. Проверь себя!</div></div></a>
+    
+    <a href="water-article.html" class="blog-card"><img src="../water-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Сколько воды пить в день</div><div class="blog-desc">Разрушаем мифы. Точный расчет нормы для твоего веса.</div></div></a>
+    
+    <a href="lab-article.html" class="blog-card"><img src="../lab-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Расшифровка анализов крови</div><div class="blog-desc">Что значат отклонения простым языком. Гид по чекапу.</div></div></a>
+    
+    <a href="macros-article.html" class="blog-card"><img src="../macros-article.jpg" alt=""><div class="blog-content"><div class="blog-title">БЖУ для похудения без фанатизма</div><div class="blog-desc">Как считать белки, жиры и углеводы и не сойти с ума.</div></div></a>
+    
+    <a href="bp-article.html" class="blog-card"><img src="../bp-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Норма давления по возрасту</div><div class="blog-desc">Таблица значений и когда бить тревогу. Трекер АД.</div></div></a>
+    
+    <a href="pension-article.html" class="blog-card"><img src="../pension-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Как узнать размер будущей пенсии</div><div class="blog-desc">Онлайн-расчет стажа и баллов. Планируй будущее.</div></div></a>
+    
+    <a href="firstaid-article.html" class="blog-card"><img src="../firstaid-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Что должно быть в домашней аптечке</div><div class="blog-desc">Полный список лекарств для дома, дачи и отпуска.</div></div></a>
+    
+    <a href="alcohol-article.html" class="blog-card"><img src="../alcohol-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Калорийность алкоголя на диете</div><div class="blog-desc">Можно ли пить и худеть? Расчет «цены» бокала.</div></div></a>
+    
+    <a href="analogues-article.html" class="blog-card"><img src="../analogues-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Дешевые аналоги дорогих лекарств</div><div class="blog-desc">Топ-10 замен, которые работают так же, но стоят копейки.</div></div></a>
+    
+    <a href="lifestyle-article.html" class="blog-card"><img src="../lifestyle-article.jpg" alt=""><div class="blog-content"><div class="blog-title">ЗОЖ без стресса: с чего начать</div><div class="blog-desc">Маленькие шаги к большому здоровью. Без насилия над собой.</div></div></a>
+    
+    <a href="vitamins-article.html" class="blog-card"><img src="../vitamins-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Первые признаки дефицита витаминов</div><div class="blog-desc">Выпадение волос, усталость, ломкость ногтей. Чек-лист.</div></div></a>
+    
+    <a href="sleep-article.html" class="blog-card"><img src="../sleep-article.jpg" alt=""><div class="blog-content"><div class="blog-title">Как улучшить сон без таблеток</div><div class="blog-desc">Гигиена сна, гаджеты и ритуалы для глубокого восстановления.</div></div></a>
+</div>
+
+<footer>© 2026 ЗдоровьеНавигатор · Информация справочная.</footer>
+</div>
+</body>
+</html>
