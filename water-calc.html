@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Норма воды — ЗдоровьеНавигатор</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+<style>
+.result-box-water { 
+    background: rgba(255, 255, 255, 0.8); 
+    border-left: 5px solid var(--accent-purple); 
+    padding: 25px; 
+    border-radius: 12px; 
+    margin-top: 30px; 
+    display: none; 
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.15);
+}
+.water-value { font-size: 3rem; font-weight: 800; color: var(--accent-purple); text-align: center; margin: 10px 0; }
+.water-glasses { text-align: center; font-size: 1.2rem; color: var(--text-muted); margin-bottom: 15px; }
+.tips-list { list-style: none; padding: 0; margin: 20px 0; }
+.tips-list li { padding: 10px 0; border-bottom: 1px dashed #CBD5E0; display: flex; align-items: center; gap: 10px; }
+.tips-list li::before { content: '💧'; font-size: 1.2rem; }
+.activity-select { width: 100%; padding: 12px; border: 1px solid var(--border-glass); border-radius: 8px; background: rgba(255,255,255,0.9); font-size: 1rem; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+<header style="margin-bottom:20px"><a href="index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
+<h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">💧 Калькулятор нормы воды</h1>
+<p class="subtitle">Узнай, сколько воды нужно пить именно тебе с учетом веса и активности.</p>
+
+<!-- КАРТИНКА -->
+<img src="water-intake.jpg" alt="Стакан воды и фитнес-браслет" style="width:100%; height:250px; object-fit:cover; border-radius:16px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Твой вес (кг)</label>
+        <input type="number" id="weight" placeholder="Например: 70" style="width:100%; padding:12px; border:1px solid var(--border-glass); border-radius:8px; background:rgba(255,255,255,0.9); font-size:1rem;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Уровень активности</label>
+        <select id="activity" class="activity-select">
+            <option value="low">Малоподвижный (офис, минимум спорта)</option>
+            <option value="medium">Средний (тренировки 2-3 раза в неделю)</option>
+            <option value="high">Высокий (спорт каждый день или физ. работа)</option>
+        </select>
+    </div>
+
+    <button onclick="calculateWater()" class="btn-link" style="width:100%; border:none; cursor:pointer;">Рассчитать норму</button>
+
+    <!-- РЕЗУЛЬТАТЫ -->
+    <div id="resultArea" class="result-box-water">
+        <div class="water-value" id="waterValue">0 л</div>
+        <div class="water-glasses" id="waterGlasses">≈ 0 стаканов (по 250 мл)</div>
+        
+        <ul class="tips-list">
+            <li>Пей воду за 30 минут до еды, а не во время.</li>
+            <li>Утром натощак выпивай 1-2 стакана теплой воды.</li>
+            <li>При тренировках добавляй 300-500 мл на каждый час нагрузки.</li>
+            <li>Чай, кофе и соки не заменяют чистую воду!</li>
+        </ul>
+        
+        <div style="margin-top:20px; font-size:0.9rem; color:var(--text-muted); text-align:center; line-height:1.5;">
+            💡 <strong>Совет:</strong> Если моча светло-желтая — ты пьешь достаточно. Темный цвет = обезвоживание.
+        </div>
+    </div>
+</div>
+
+<footer>© 2026 ЗдоровьеНавигатор · Информация справочная.</footer>
+</div>
+
+<script>
+function calculateWater() {
+    const w = parseFloat(document.getElementById('weight').value);
+    const activity = document.getElementById('activity').value;
+    
+    if (!w || w <= 0) return alert("Пожалуйста, введите корректный вес");
+    
+    // Базовая формула: 30 мл на кг веса
+    let baseWater = w * 30;
+    
+    // Коэффициент активности
+    let multiplier = 1;
+    if (activity === 'medium') multiplier = 1.2;
+    if (activity === 'high') multiplier = 1.5;
+    
+    const totalMl = Math.round(baseWater * multiplier);
+    const liters = (totalMl / 1000).toFixed(1);
+    const glasses = Math.round(totalMl / 250);
+    
+    // Обновление UI
+    document.getElementById('resultArea').style.display = 'block';
+    document.getElementById('waterValue').innerText = liters + " л/день";
+    document.getElementById('waterGlasses').innerText = "≈ " + glasses + " стаканов (по 250 мл)";
+}
+</script>
+</body>
+</html>
