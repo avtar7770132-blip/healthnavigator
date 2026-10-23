@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аналоги лекарств — ЗдоровьеНавигатор</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+<style>
+.search-box { position: relative; margin-bottom: 30px; }
+.search-input { width: 100%; padding: 15px 20px; border: 2px solid var(--border-glass); border-radius: 12px; background: rgba(255,255,255,0.9); font-size: 1.1rem; transition: all 0.3s; }
+.search-input:focus { outline: none; border-color: var(--accent-purple); box-shadow: 0 0 15px rgba(138, 43, 226, 0.2); }
+.category-filter { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; scrollbar-width: none; }
+.cat-btn { white-space: nowrap; padding: 8px 16px; border: 1px solid var(--border-glass); border-radius: 20px; background: rgba(255,255,255,0.7); cursor: pointer; font-size: 0.9rem; transition: all 0.3s; }
+.cat-btn.active, .cat-btn:hover { background: var(--accent-purple); color: white; border-color: var(--accent-purple); }
+.drug-card { background: rgba(255,255,255,0.8); border-radius: 12px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--accent-purple); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+.drug-info h3 { margin: 0 0 5px; color: var(--text-dark); font-size: 1.2rem; }
+.drug-substance { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; }
+.price-tag { font-size: 1.1rem; font-weight: bold; color: #276749; }
+.buy-btn { background: var(--accent-purple); color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; transition: 0.3s; }
+.buy-btn:hover { background: var(--accent-hover); transform: scale(1.05); }
+.savings-badge { background: #C6F6D5; color: #276749; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+.no-results { text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.1rem; display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+<header style="margin-bottom:20px"><a href="index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
+<h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">💊 Аналоги лекарств</h1>
+<p class="subtitle">Найди дешевую замену дорогому препарату. Экономь до 70% без потери качества.</p>
+
+<!-- КАРТИНКА -->
+<img src="first-aid-kit.jpg" alt="Аптечка и лекарства" style="width:100%; height:250px; object-fit:cover; border-radius:16px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+<div class="card" style="max-width:800px; margin:0 auto;">
+    <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="Введите название препарата (например: Нурофен, Эналаприл)...">
+    </div>
+    
+    <div class="category-filter" id="catFilter">
+        <button class="cat-btn active" onclick="filterDrugs('all')">Все</button>
+        <button class="cat-btn" onclick="filterDrugs('pain')">Обезболивающие</button>
+        <button class="cat-btn" onclick="filterDrugs('pressure')">Давление</button>
+        <button class="cat-btn" onclick="filterDrugs('stomach')">ЖКТ</button>
+        <button class="cat-btn" onclick="filterDrugs('cold')">Простуда</button>
+        <button class="cat-btn" onclick="filterDrugs('vitamins')">Витамины</button>
+    </div>
+
+    <div id="drugsList"></div>
+    <div id="noResults" class="no-results">Ничего не найдено. Попробуйте другое название или категорию.</div>
+</div>
+
+<footer>© 2026 ЗдоровьеНавигатор · Информация справочная. Перед заменой проконсультируйтесь с врачом.</footer>
+</div>
+
+<script>
+// База данных аналогов (упрощенная, можно расширять)
+const DRUGS_DB = [
+    { name: "Нурофен", substance: "Ибупрофен", category: "pain", price: 350, analog: "Ибупрофен", analogPrice: 60, link: "#" },
+    { name: "Миг", substance: "Ибупрофен", category: "pain", price: 280, analog: "Ибупрофен", analogPrice: 60, link: "#" },
+    { name: "Эналаприл", substance: "Эналаприл", category: "pressure", price: 120, analog: "Лизиноприл", analogPrice: 90, link: "#" },
+    { name: "Капотен", substance: "Каптоприл", category: "pressure", price: 250, analog: "Каптоприл-Акрихин", analogPrice: 80, link: "#" },
+    { name: "Мезим", substance: "Панкреатин", category: "stomach", price: 300, analog: "Панкреатин", analogPrice: 50, link: "#" },
+    { name: "Креон", substance: "Панкреатин", category: "stomach", price: 600, analog: "Панкреатин", analogPrice: 50, link: "#" },
+    { name: "Смекта", substance: "Диосмектит", category: "stomach", price: 250, analog: "Неосмектин", analogPrice: 120, link: "#" },
+    { name: "ТераФлю", substance: "Парацетамол+Фенирамин", category: "cold", price: 450, analog: "Ринза", analogPrice: 180, link: "#" },
+    { name: "Арбидол", substance: "Умифеновир", category: "cold", price: 550, analog: "Ингавирин", analogPrice: 400, link: "#" }, // Пример, не реклама
+    { name: "Компливит", substance: "Витаминно-минеральный комплекс", category: "vitamins", price: 300, analog: "Алфавит", analogPrice: 250, link: "#" },
+    { name: "Витрум", substance: "Поливитамины", category: "vitamins", price: 800, analog: "Компливит", analogPrice: 300, link: "#" }
+];
+
+function renderDrugs(filter = 'all', search = '') {
+    const list = document.getElementById('drugsList');
+    const noRes = document.getElementById('noResults');
+    list.innerHTML = '';
+    
+    let filtered = DRUGS_DB;
+    if (filter !== 'all') filtered = filtered.filter(d => d.category === filter);
+    if (search) filtered = filtered.filter(d => d.name.toLowerCase().includes(search.toLowerCase()) || d.analog.toLowerCase().includes(search.toLowerCase()));
+    
+    if (filtered.length === 0) {
+        noRes.style.display = 'block';
+        return;
+    }
+    noRes.style.display = 'none';
+    
+    filtered.forEach(drug => {
+        const saving = Math.round(((drug.price - drug.analogPrice) / drug.price) * 100);
+        const card = document.createElement('div');
+        card.className = 'drug-card';
+        card.innerHTML = `
+            <div class="drug-info">
+                <h3>${drug.name} → ${drug.analog}</h3>
+                <div class="drug-substance">Действующее вещество: ${drug.substance}</div>
+                <div class="price-tag">${drug.price} ₽ → <span style="color:#E53E3E">${drug.analogPrice} ₽</span> <span class="savings-badge">-${saving}%</span></div>
+            </div>
+            <a href="${drug.link}" target="_blank" class="buy-btn">Купить аналог →</a>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function filterDrugs(cat) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    renderDrugs(cat, document.getElementById('searchInput').value);
+}
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const activeCat = document.querySelector('.cat-btn.active').getAttribute('onclick').match(/'(\w+)'/)[1];
+    renderDrugs(activeCat, e.target.value);
+});
+
+// Инициализация
+renderDrugs();
+</script>
+</body>
+</html>
