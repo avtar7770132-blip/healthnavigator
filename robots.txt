@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://avtar7770132-blip.github.io/healthnavigator/sitemap.xml
