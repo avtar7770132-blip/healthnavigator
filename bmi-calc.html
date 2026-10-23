@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор ИМТ — ЗдоровьеНавигатор</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+<style>
+.result-box-health { 
+    background: rgba(255, 255, 255, 0.8); 
+    border-left: 5px solid var(--accent-purple); 
+    padding: 25px; 
+    border-radius: 12px; 
+    margin-top: 30px; 
+    display: none; 
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.15);
+}
+.bmi-value { font-size: 3rem; font-weight: 800; color: var(--accent-purple); text-align: center; margin: 10px 0; }
+.bmi-status { font-size: 1.2rem; font-weight: bold; text-align: center; margin-bottom: 15px; }
+.status-normal { color: #2D3748; }
+.status-warning { color: #E53E3E; }
+.status-info { color: #3182CE; }
+.ideal-weight { text-align: center; font-size: 1.1rem; color: var(--text-muted); margin-top: 10px; padding-top: 10px; border-top: 1px dashed #CBD5E0; }
+.scale-bar { height: 12px; background: #E2E8F0; border-radius: 6px; margin: 20px 0; position: relative; overflow: hidden; }
+.scale-fill { height: 100%; width: 0%; transition: width 1s ease-out, background-color 0.5s; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="container">
+<header style="margin-bottom:20px"><a href="index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
+<h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">⚖️ Калькулятор ИМТ</h1>
+<p class="subtitle">Узнай свой индекс массы тела и идеальный вес для своего роста.</p>
+
+<!-- КАРТИНКА -->
+<img src="bmi-scale.jpg" alt="Электронные весы" style="width:100%; height:250px; object-fit:cover; border-radius:16px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Твой вес (кг)</label>
+        <input type="number" id="weight" placeholder="Например: 75" style="width:100%; padding:12px; border:1px solid var(--border-glass); border-radius:8px; background:rgba(255,255,255,0.9); font-size:1rem;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Твой рост (см)</label>
+        <input type="number" id="height" placeholder="Например: 180" style="width:100%; padding:12px; border:1px solid var(--border-glass); border-radius:8px; background:rgba(255,255,255,0.9); font-size:1rem;">
+    </div>
+
+    <button onclick="calculateBMI()" class="btn-link" style="width:100%; border:none; cursor:pointer;">Рассчитать ИМТ</button>
+
+    <!-- РЕЗУЛЬТАТЫ -->
+    <div id="resultArea" class="result-box-health">
+        <div class="bmi-value" id="bmiValue">0.0</div>
+        <div class="bmi-status" id="bmiStatus">Введите данные</div>
+        
+        <div class="scale-bar">
+            <div id="scaleFill" class="scale-fill"></div>
+        </div>
+        
+        <div class="ideal-weight" id="idealWeight">Идеальный вес: -- кг</div>
+        
+        <div style="margin-top:20px; font-size:0.9rem; color:var(--text-muted); text-align:center; line-height:1.5;">
+            💡 <strong>Совет:</strong> ИМТ — ориентировочный показатель. Для точной оценки состава тела учитывайте мышечную массу и возраст.
+        </div>
+    </div>
+</div>
+
+<footer>© 2026 ЗдоровьеНавигатор · Информация справочная.</footer>
+</div>
+
+<script>
+function calculateBMI() {
+    const w = parseFloat(document.getElementById('weight').value);
+    const h = parseFloat(document.getElementById('height').value);
+    
+    if (!w || !h || h <= 0) return alert("Пожалуйста, введите корректные вес и рост");
+    
+    // Расчет ИМТ
+    const bmi = w / Math.pow(h / 100, 2);
+    const bmiFixed = bmi.toFixed(1);
+    
+    // Расчет идеального веса (формула Брока упрощенная)
+    const idealMin = (18.5 * Math.pow(h / 100, 2)).toFixed(1);
+    const idealMax = (24.9 * Math.pow(h / 100, 2)).toFixed(1);
+    
+    // Определение статуса и цвета
+    let status = "";
+    let colorClass = "";
+    let fillColor = "";
+    let fillWidth = "0%";
+    
+    if (bmi < 18.5) {
+        status = "Дефицит массы тела";
+        colorClass = "status-info";
+        fillColor = "#3182CE"; // Синий
+        fillWidth = "20%";
+    } else if (bmi >= 18.5 && bmi < 25) {
+        status = "Норма ✅";
+        colorClass = "status-normal";
+        fillColor = "#48BB78"; // Зеленый
+        fillWidth = "50%";
+    } else if (bmi >= 25 && bmi < 30) {
+        status = "Избыточная масса (Предожирение)";
+        colorClass = "status-warning";
+        fillColor = "#ED8936"; // Оранжевый
+        fillWidth = "75%";
+    } else {
+        status = "Ожирение ️";
+        colorClass = "status-warning";
+        fillColor = "#E53E3E"; // Красный
+        fillWidth = "100%";
+    }
+    
+    // Обновление UI
+    document.getElementById('resultArea').style.display = 'block';
+    document.getElementById('bmiValue').innerText = bmiFixed;
+    document.getElementById('bmiValue').style.color = fillColor;
+    
+    const statusEl = document.getElementById('bmiStatus');
+    statusEl.innerText = status;
+    statusEl.className = "bmi-status " + colorClass;
+    
+    document.getElementById('idealWeight').innerText = `Идеальный диапазон: ${idealMin} – ${idealMax} кг`;
+    
+    const fillEl = document.getElementById('scaleFill');
+    fillEl.style.backgroundColor = fillColor;
+    fillEl.style.width = fillWidth;
+}
+</script>
+</body>
+</html>
