@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дешифратор анализов — ЗдоровьеНавигатор</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+<style>
+.result-box-lab { 
+    background: rgba(255, 255, 255, 0.8); 
+    border-left: 5px solid var(--accent-purple); 
+    padding: 25px; 
+    border-radius: 12px; 
+    margin-top: 30px; 
+    display: none; 
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.15);
+}
+.param-name { font-size: 1.3rem; font-weight: bold; color: var(--text-dark); margin-bottom: 10px; }
+.param-result { font-size: 1.1rem; margin-bottom: 15px; }
+.status-badge { 
+    display: inline-block; 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    font-weight: bold; 
+    font-size: 0.9rem; 
+    margin-bottom: 15px;
+}
+.status-ok { background: #C6F6D5; color: #276749; }
+.status-warn { background: #FED7D7; color: #C53030; }
+.explanation { 
+    background: rgba(138, 43, 226, 0.05); 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-top: 15px; 
+    font-size: 0.95rem; 
+    line-height: 1.6;
+}
+.select-styled { 
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid var(--border-glass); 
+    border-radius: 8px; 
+    background: rgba(255,255,255,0.9); 
+    font-size: 1rem; 
+    margin-bottom: 20px;
+}
+.disclaimer { 
+    font-size: 0.85rem; 
+    color: var(--text-muted); 
+    text-align: center; 
+    margin-top: 20px; 
+    font-style: italic;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header style="margin-bottom:20px"><a href="index.html" style="color:var(--accent-purple);font-weight:bold;text-decoration:none">← На главную</a></header>
+<h1 style="background: linear-gradient(90deg, var(--text-dark), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"> Дешифратор анализов</h1>
+<p class="subtitle">Узнай простым языком, что означают отклонения в твоих результатах.</p>
+
+<!-- КАРТИНКА -->
+<img src="blood-test.jpg" alt="Лабораторный анализ крови" style="width:100%; height:250px; object-fit:cover; border-radius:16px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Выбери показатель</label>
+        <select id="paramSelect" class="select-styled">
+            <option value="">-- Выбери параметр --</option>
+            <option value="hemoglobin">Гемоглобин (Hb)</option>
+            <option value="leukocytes">Лейкоциты (WBC)</option>
+            <option value="glucose">Глюкоза (сахар)</option>
+            <option value="cholesterol">Холестерин общий</option>
+            <option value="ferritin">Ферритин</option>
+        </select>
+    </div>
+    
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Твой результат</label>
+        <input type="number" id="userValue" placeholder="Например: 130" step="0.1" style="width:100%; padding:12px; border:1px solid var(--border-glass); border-radius:8px; background:rgba(255,255,255,0.9); font-size:1rem;">
+    </div>
+
+    <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-dark);">Пол</label>
+        <select id="gender" class="select-styled">
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+        </select>
+    </div>
+
+    <button onclick="decodeLab()" class="btn-link" style="width:100%; border:none; cursor:pointer;">Расшифровать</button>
+
+    <!-- РЕЗУЛЬТАТЫ -->
+    <div id="resultArea" class="result-box-lab">
+        <div class="param-name" id="paramName">Название показателя</div>
+        <span id="statusBadge" class="status-badge">Статус</span>
+        <div class="param-result" id="paramResult">Твой результат: --</div>
+        
+        <div class="explanation" id="explanationText">
+            Здесь будет объяснение простым языком...
+        </div>
+        
+        <div class="disclaimer">
+            ⚠️ Данный сервис носит информационный характер. Для постановки диагноза обратись к врачу.
+        </div>
+    </div>
+</div>
+
+<footer>© 2026 ЗдоровьеНавигатор · Информация справочная.</footer>
+</div>
+
+<script>
+// База данных показателей (упрощенная)
+const LAB_DB = {
+    hemoglobin: {
+        name: "Гемоглобин (Hb)",
+        unit: "г/л",
+        male: { min: 130, max: 170 },
+        female: { min: 120, max: 150 },
+        low: "Низкий гемоглобин может указывать на анемию, дефицит железа или кровопотерю. Симптомы: слабость, бледность, головокружение.",
+        high: "Высокий гемоглобин бывает при обезвоживании, курении или проживании в высокогорье. Иногда требует дообследования.",
+        ok: "Гемоглобин в норме. Твои эритроциты хорошо переносят кислород."
+    },
+    leukocytes: {
+        name: "Лейкоциты (WBC)",
+        unit: "×10⁹/л",
+        male: { min: 4.0, max: 9.0 },
+        female: { min: 4.0, max: 9.0 },
+        low: "Снижение лейкоцитов (лейкопения) может быть следствием вирусных инфекций, приема некоторых лекарств или проблем с иммунитетом.",
+        high: "Повышение лейкоцитов (лейкоцитоз) чаще всего говорит о воспалении, бактериальной инфекции или стрессе организма.",
+        ok: "Уровень лейкоцитов в норме. Иммунная система работает стабильно."
+    },
+    glucose: {
+        name: "Глюкоза (сахар натощак)",
+        unit: "ммоль/л",
+        male: { min: 3.3, max: 5.5 },
+        female: { min: 3.3, max: 5.5 },
+        low: "Низкий сахар (гипогликемия) опасен! Может вызывать дрожь, потливость, спутанность сознания. Требует срочного приема углеводов.",
+        high: "Повышенный сахар — тревожный звоночек. Может указывать на преддиабет или диабет. Обязательно пересдай анализ и посети эндокринолога.",
+        ok: "Уровень глюкозы в норме. Углеводный обмен не нарушен."
+    },
+    cholesterol: {
+        name: "Холестерин общий",
+        unit: "ммоль/л",
+        male: { min: 3.0, max: 5.2 },
+        female: { min: 3.0, max: 5.2 },
+        low: "Слишком низкий холестерин встречается редко, но может быть связан с проблемами печени или щитовидной железы.",
+        high: "Высокий холестерин — фактор риска атеросклероза и болезней сердца. Пересмотри питание: меньше жирного, больше овощей и рыбы.",
+        ok: "Холестерин в пределах нормы. Сосуды защищены."
+    },
+    ferritin: {
+        name: "Ферритин (запасы железа)",
+        unit: "мкг/л",
+        male: { min: 20, max: 250 },
+        female: { min: 10, max: 120 },
+        low: "Низкий ферритин = скрытый железодефицит. Даже если гемоглобин в норме, ты можешь чувствовать усталость, выпадение волос, ломкость ногтей.",
+        high: "Высокий ферритин бывает при воспалении, болезнях печени или избытке железа. Нужна консультация врача.",
+        ok: "Запасы железа в организме достаточны."
+    }
+};
+
+function decodeLab() {
+    const paramKey = document.getElementById('paramSelect').value;
+    const value = parseFloat(document.getElementById('userValue').value);
+    const gender = document.getElementById('gender').value;
+    
+    if (!paramKey || isNaN(value)) return alert("Пожалуйста, выбери показатель и введи результат");
+    
+    const data = LAB_DB[paramKey];
+    const range = data[gender];
+    
+    let status = "";
+    let badgeClass = "";
+    let explanation = "";
+    
+    if (value < range.min) {
+        status = "Ниже нормы";
+        badgeClass = "status-warn";
+        explanation = data.low;
+    } else if (value > range.max) {
+        status = "Выше нормы";
+        badgeClass = "status-warn";
+        explanation = data.high;
+    } else {
+        status = "В норме ✅";
+        badgeClass = "status-ok";
+        explanation = data.ok;
+    }
+    
+    // Обновление UI
+    document.getElementById('resultArea').style.display = 'block';
+    document.getElementById('paramName').innerText = data.name;
+    document.getElementById('paramResult').innerText = `Твой результат: ${value} ${data.unit} (норма: ${range.min}–${range.max})`;
+    
+    const badge = document.getElementById('statusBadge');
+    badge.innerText = status;
+    badge.className = "status-badge " + badgeClass;
+    
+    document.getElementById('explanationText').innerText = explanation;
+}
+</script>
+</body>
+</html>
