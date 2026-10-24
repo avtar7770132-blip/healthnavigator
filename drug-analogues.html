@@ -95,7 +95,7 @@ function renderDrugs(filter = 'all', search = '') {
                 <div class="price-tag">${drug.price} ₽ → <span style="color:#E53E3E">${drug.analogPrice} ₽</span> <span class="savings-badge">-${saving}%</span></div>
             </div>
             <a href="https://ru.w10o.xyz/6adcac9adbc77?erid=2SDnjcG7Phc" target="_blank" class="buy-btn">Купить аналог →</a>
-        `;
+        `;<div style="font-size:0.7rem; color:#888; margin-top:5px;">Реклама. erid: 2SDnjcG7Phc</div>
         list.appendChild(card);
     });
 }
