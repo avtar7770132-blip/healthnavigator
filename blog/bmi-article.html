@@ -62,5 +62,23 @@
 
 <footer style="text-align:center; margin-top:60px; color:var(--text-muted);">© 2026 ЗдоровьеНавигатор · Информация справочная. Не является медицинской рекомендацией.</footer>
 </div>
-</body>
+<!-- АВТОМАТИЧЕСКАЯ ПАРТНЁРКА АПТЕКИ 36.6 ДЛЯ СТАТЕЙ -->
+<script>
+(function() {
+    const partnerHTML = `
+    <div style="text-align:center; margin:40px auto; padding:25px; background:rgba(138,43,226,0.05); border-radius:12px; border:1px dashed #8A2BE2; max-width:600px;">
+        <div style="font-weight:bold; color:#6A1B9A; margin-bottom:10px; font-size:1.2rem;">💊 Нужны лекарства по выгодной цене?</div>
+        <p style="margin-bottom:15px; color:#555;">Закажи в Аптеке 36.6 — скидки до 50%, более 20 000 товаров, доставка на дом или в ближайшую аптеку.</p>
+        <a href="https://ru.w10o.xyz/6adcac9adbc77?erid=2SDnjcG7Phc" target="_blank" rel="nofollow noopener" style="display:inline-block; background:#8A2BE2; color:white; text-decoration:none; padding:14px 28px; border-radius:8px; font-weight:bold; transition:0.3s;">Перейти в Аптеку 36.6 →</a>
+        <div style="font-size:0.7rem; color:#888; margin-top:10px; line-height:1.4;">Реклама. Рекламодатель ООО "АПТЕКА-А.в.е", ИНН 7705947629. Сайт https://366.ru<br>erid: 2SDnjcG7Phc</div>
+    </div>`;
+    
+    const footer = document.querySelector('footer');
+    if (footer) {
+        footer.insertAdjacentHTML('beforebegin', partnerHTML);
+    } else {
+        document.body.insertAdjacentHTML('beforeend', partnerHTML);
+    }
+})();
+</script></body>
 </html>
