@@ -178,5 +178,35 @@ function renderChart() {
     });
 }
 </script>
-</body>
+<!-- АВТОМАТИЧЕСКАЯ ПАРТНЁРКА ЗДRAVSITY + КАРТИНКА -->
+<script>
+(function() {
+    // Вставляем картинку здрав.jpg в начало, если её нет
+    const container = document.querySelector('.container');
+    if (container && !container.querySelector('img[src*="здрав"]')) {
+        const img = document.createElement('img');
+        img.src = 'здрав.jpg';
+        img.alt = 'ЗдравСити';
+        img.style.cssText = 'width:100%; height:200px; object-fit:cover; border-radius:16px; margin-bottom:25px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);';
+        container.insertBefore(img, container.children[1]);
+    }
+
+    // Создаём блок партнёрки ЗдравСити
+    const partnerHTML = `
+    <div style="text-align:center; margin:35px auto; padding:25px; background:rgba(138,43,226,0.05); border-radius:12px; border:1px dashed #8A2BE2; max-width:600px;">
+        <div style="font-weight:bold; color:#6A1B9A; margin-bottom:10px; font-size:1.2rem;">💊 Нужны лекарства или витамины?</div>
+        <p style="margin-bottom:15px; color:#555;">Закажи в ЗдравСити — скидки до 40%, доставка в 2000+ аптек по РФ.</p>
+        <a href="https://ru.i07o.xyz/6adcb736dfc0c?erid=2SDnjc4kgDE" target="_blank" rel="nofollow noopener" style="display:inline-block; background:#8A2BE2; color:white; text-decoration:none; padding:14px 28px; border-radius:8px; font-weight:bold; transition:0.3s;">Перейти в ЗдравСити →</a>
+        <div style="font-size:0.7rem; color:#888; margin-top:10px; line-height:1.4;">Реклама. Рекламодатель АО "ЦЕНТР ВНЕДРЕНИЯ ПРОТЕК", ИНН 7724053916. Сайт https://zdravcity.ru<br>erid: 2SDnjc4kgDE</div>
+    </div>`;
+    
+    // Вставляем перед футером
+    const footer = document.querySelector('footer');
+    if (footer) {
+        footer.insertAdjacentHTML('beforebegin', partnerHTML);
+    } else {
+        document.body.insertAdjacentHTML('beforeend', partnerHTML);
+    }
+})();
+</script></body>
 </html>
