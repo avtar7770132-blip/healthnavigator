@@ -14,6 +14,61 @@
     })(window, document, "clarity", "script", "z26px2msaf");
 </script>
 <style>
+/* СТИЛИ ДЛЯ МАГНИТА ЗДОРОВЬЯ */
+.health-magnet {
+    background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 100%);
+    border: 2px solid #16a34a;
+    border-radius: 16px;
+    padding: 20px 30px;
+    margin: 20px auto 30px;
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 25px rgba(22, 163, 74, 0.15);
+    animation: pulse-green 2s infinite;
+}
+.magnet-text h3 {
+    color: #15803d;
+    margin: 0 0 5px 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.magnet-text p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.95rem;
+}
+.magnet-btn {
+    background: #16a34a;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+}
+.magnet-btn:hover {
+    background: #15803d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+}
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+@media (max-width: 600px) {
+    .health-magnet { flex-direction: column; text-align: center; gap: 15px; padding: 20px; }
+    .magnet-text h3 { justify-content: center; }
+}
+
+/* СТИЛИ АПТЕКИ (ОСТАВИЛ ТВОИ) */
 .apteka-banner {
     background: linear-gradient(135deg, #8A2BE2, #6A1B9A);
     border-radius: 16px;
@@ -53,7 +108,16 @@
     </div>
 </div>
 
-<!-- РЕКЛАМА 36.6 СРАЗУ ПОД ШАПКОЙ -->
+<!-- 🔥 НОВЫЙ БЛОК-МАГНИТ ДЛЯ ЗДОРОВЬЯ 🔥 -->
+<div class="health-magnet">
+    <div class="magnet-text">
+        <h3>🩺 Узнай свои риски за 10 секунд</h3>
+        <p>Проверь ИМТ, норму воды и давление по стандартам ВОЗ</p>
+    </div>
+    <a href="bmi-calc.html" class="magnet-btn">Проверить сейчас →</a>
+</div>
+
+<!-- РЕКЛАМА 36.6 (СДВИНУТА НИЖЕ МАГНИТА) -->
 <div class="apteka-banner">
     <h3>💊 Аптека 36.6 — скидки до 50% на лекарства</h3>
     <p>Более 20 000 товаров с доставкой на дом или в ближайшую аптеку</p>
@@ -91,9 +155,8 @@
 <!-- 8. Алкоголь -->
 <div class="card fade-in-up"><img src="alcohol-calories.jpg" alt=""><div class="card-title">Калории алкоголя</div><div class="card-desc">Сколько ккал в бокале вина или пиве?</div><a href="alcohol-calories.html" class="btn-link">Узнать →</a></div>
 
-<!-- 9. Аналоги (ИСПРАВЛЕНО) -->
+<!-- 9. Аналоги -->
 <div class="card fade-in-up">
-    <!-- Было drug-analogues.jpg, стало analogues-article.jpg -->
     <img src="analogues-article.jpg" alt=""> 
     <div class="card-title">Аналоги лекарств</div>
     <div class="card-desc">Дешевые замены дорогих препаратов.</div>
